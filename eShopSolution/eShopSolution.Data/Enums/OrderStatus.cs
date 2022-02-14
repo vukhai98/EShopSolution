@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace eShopSolution.Data.Enums
 {
-    class OrderStatus
+    public enum OrderStatus
     {
+        InProgress,
+        Confirmed,
+        Shipping,
+        Success,
+        Canceled
     }
 }
