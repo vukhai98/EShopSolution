@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eShopSolution.Application.Catalog.Products.Dtos
+namespace eShopSolution.Utillities.Exceptions
 {
-    class ProductCreateRequest
+    class EShopException
     {
     }
 }
