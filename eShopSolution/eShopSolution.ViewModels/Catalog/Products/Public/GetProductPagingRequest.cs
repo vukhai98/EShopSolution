@@ -1,14 +1,14 @@
-﻿using eShopSolution.Application.Dtos;
+﻿using eShopSolution.ViewModels.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eShopSolution.Application.Catalog.Products.Dtos.Public
+namespace eShopSolution.ViewModels.Catalog.Products.Public
 {
     public class GetProductPagingRequest : PagingRequestBase
     {
-        public int CategoryId { set; get; }
+        public int? CategoryId { set; get; }
     }
 }
