@@ -5,7 +5,6 @@ using eShopSolution.Data.Entities;
 using eShopSolution.Utillities.Exceptions;
 using eShopSolution.ViewModels.Catalog.ProductImages;
 using eShopSolution.ViewModels.Catalog.Products;
-using eShopSolution.ViewModels.Catalog.Products.Manage;
 using eShopSolution.ViewModels.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -120,7 +119,7 @@ namespace eShopSolution.Application.Catalog.Products
 
         }
 
-        public async Task<PagedResult<ProductViewModel>> GetAllPaging(GetProductPagingRequest request)
+        public async Task<PagedResult<ProductViewModel>> GetAllPaging(GetManageProductPagingRequest request)
         {
             // 1.Select join
             var query = from p in _context.Products
@@ -129,9 +128,9 @@ namespace eShopSolution.Application.Catalog.Products
                         join c in _context.Categories on pic.CategoryId equals c.Id
                         select new { p, pt, pic };
             //2. Filter
-            if (!string.IsNullOrEmpty(request.Keywork))
+            if (!string.IsNullOrEmpty(request.Keyword))
             {
-                query = query.Where(x => x.pt.Name.Contains(request.Keywork));
+                query = query.Where(x => x.pt.Name.Contains(request.Keyword));
             }
             if (request.CategoryIds.Count > 0)
             {
