@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 
 namespace eShopSolution.BackendAPI.Controllers
 {
+    //api/products/
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
         private readonly IPublicProductService _publicProductService;
 
@@ -20,35 +21,26 @@ namespace eShopSolution.BackendAPI.Controllers
 
         private readonly IStorageService _storageService;
 
-        public ProductController(IPublicProductService publicProductService, IManageProductService manageProductService, IStorageService storageService)
+        public ProductsController(IPublicProductService publicProductService, IManageProductService manageProductService, IStorageService storageService)
         {
             _publicProductService = publicProductService;
             _manageProductService = manageProductService;
             _storageService = storageService;
         }
 
-        //http://localhost:port/product
+        //http://localhost:port/product?pageIndex =1&pageSize=10&CategoryId=
         [HttpGet("{languageId}")]
-        public async Task<IActionResult> Get(string languageId)
+        public async Task<IActionResult> GetAllPaging(string languageId,[FromQuery] GetPublicProductPagingRequest request)
         {
-            var products = await _publicProductService.GetAll(languageId);
-
-            return Ok(products);
-        }
-
-        //http://localhost:port/product/public-paging
-        [HttpGet("public-paging/{languageId}")]
-        public async Task<IActionResult> Get([FromQuery] GetPublicProductPagingRequest request)
-        {
-            var products = await _publicProductService.GetAllByCategoryId(request);
+            var products = await _publicProductService.GetAllByCategoryId( languageId,request);
             return Ok(products);
         }
 
         //http://localhost:port/product/1
-        [HttpGet("{id}/{languageId}")]
-        public async Task<IActionResult> GetById(int id, string languageId)
+        [HttpGet("{productId}/{languageId}")]
+        public async Task<IActionResult> GetById(int productId, string languageId)
         {
-            var product = await _manageProductService.GetById(id,  languageId);
+            var product = await _manageProductService.GetById(productId,  languageId);
             if (product == null)
                 return BadRequest("Cannot find product");
             return Ok(product);
@@ -57,6 +49,10 @@ namespace eShopSolution.BackendAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] ProductCreateRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var productId = await _manageProductService.Create(request);
             if (productId == 0)
                 return BadRequest();
@@ -68,6 +64,10 @@ namespace eShopSolution.BackendAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromForm] ProductUpdateRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var affectedResult = await _manageProductService.Update(request);
             if (affectedResult == 0)
                 return BadRequest();
@@ -76,10 +76,10 @@ namespace eShopSolution.BackendAPI.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("{productId}")]
+        public async Task<IActionResult> Delete(int productId)
         {
-            var affectedResult = await _manageProductService.Delete(id);
+            var affectedResult = await _manageProductService.Delete(productId);
             if (affectedResult == 0)
                 return BadRequest();
 
@@ -87,10 +87,10 @@ namespace eShopSolution.BackendAPI.Controllers
             return Ok();
 
         }
-        [HttpPut("price/{id}/{newPrice}")]
-        public async Task<IActionResult> UpdatePrice(int id, decimal newPrice)
+        [HttpPatch("{productId}/{newPrice}")]
+        public async Task<IActionResult> UpdatePrice(int productId, decimal newPrice)
         {
-            var isSuccessful = await _manageProductService.UpdatePrice(id,newPrice);
+            var isSuccessful = await _manageProductService.UpdatePrice(productId, newPrice);
 
             if (isSuccessful)
                 return Ok();
