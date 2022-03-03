@@ -13,11 +13,11 @@ namespace eShopSolution.BackendAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
 
-        public UsersController(IUserService userService)
+        public UserController(IUserService userService)
         {
             _userService  = userService;
         }
@@ -38,7 +38,7 @@ namespace eShopSolution.BackendAPI.Controllers
                 return BadRequest("Username or password is inncorrect.");
             }
 
-            return Ok(new { token = resultToken });
+            return Ok(resultToken);
         }
 
         [HttpPost("register")]
