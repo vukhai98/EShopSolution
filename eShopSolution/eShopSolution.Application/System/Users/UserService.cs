@@ -41,11 +41,11 @@ namespace eShopSolution.Application.System.Users
                 return null;
             }
             // Kiểm tra xem nếu 
-            var result = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, true);
-            if (!result.Succeeded)
-            {
-                return null;
-            }
+            //var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, request.RememberMe, true);
+            //if (!result.Succeeded)
+            //{
+            //    return null;
+            //}
             var roles = await _userManager.GetRolesAsync(user);
             var claims = new[]
             {
@@ -65,22 +65,31 @@ namespace eShopSolution.Application.System.Users
 
             return new JwtSecurityTokenHandler().WriteToken(token);
 
-
-
-
         }
 
         public async Task<PagedResult<UserViewModel>> GetUserPaging(GetUserPagingRequest request)
         {
+            // Láy ra tất cả các user
             var query = _userManager.Users;
+
+            // key word truyền vào khác rỗng
             if (!string.IsNullOrEmpty(request.Keyword))
             {
-                query = query.Where(x => x.UserName.Contains(request.Keyword) 
-                                 || x.PhoneNumber.Contains(request.Keyword));
+                query = query.Where(x => x.UserName.Contains(request.Keyword.ToLower()) 
+                                 || x.PhoneNumber.Contains(request.Keyword.ToLower()));
             }
             //3.Paging
+            //Đếm số bản ghi
             int totalRow = await query.CountAsync();
 
+            //Todo Khaivm: Fix cứng nếu không tryền pagesize và page index
+            if (request.PageIndex == null && request.PageSize == null)
+            {
+                request.PageIndex = 1;
+                request.PageSize = 25;
+            }
+          
+            // Phân trang và map model trả ra cho clientk
             var data = await query.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize)
                             .Select(x => new UserViewModel
                             {
@@ -91,6 +100,7 @@ namespace eShopSolution.Application.System.Users
                                 Id = x.Id,
                                 LastName =x.LastName
                             }).ToListAsync();
+
             //4. Select and projection
             var pageResult = new PagedResult<UserViewModel>()
             {
@@ -111,7 +121,7 @@ namespace eShopSolution.Application.System.Users
                 UserName = request.UserName,
                 PhoneNumber = request.PhoneNumber
             };
-            var result = await _userManager.CreateAsync(user, request.Password);
+            var result = await _userManager.CreateAsync(user);
             if (result.Succeeded)
             {
                 return true;
