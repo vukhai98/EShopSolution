@@ -1,4 +1,4 @@
-using eShopSolution.Application.Catalog.Products;
+﻿using eShopSolution.Application.Catalog.Products;
 using eShopSolution.Application.Common;
 using eShopSolution.Application.System.Users;
 using eShopSolution.Data.EF;
@@ -40,7 +40,8 @@ namespace eShopSolution.BackendAPI
             services.AddDbContext<EShopDbContext>(options =>
                  options.UseSqlServer(Configuration.GetConnectionString(SystemConstants.MainConnectionString)));
 
-            services.AddIdentity<AppUser, AppRole>()
+
+              services.AddIdentity<AppUser, AppRole>()
                 .AddEntityFrameworkStores<EShopDbContext>()
                 .AddDefaultTokenProviders();
             //Declare DI
@@ -56,6 +57,7 @@ namespace eShopSolution.BackendAPI
             //services.AddTransient<IValidator<LoginRequest>,LoginResquestValidator>();
             //services.AddTransient<IValidator<RegisterRequest>,RegisterRequestValidator>();
 
+            // Đăng ký tất cả các tk ở trong assembly có đuôi là Validator
             services.AddControllers()
                     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginResquestValidator>());
             
@@ -146,8 +148,6 @@ namespace eShopSolution.BackendAPI
             app.UseRouting();
 
             app.UseAuthorization();
-
-
 
             app.UseEndpoints(endpoints =>
             {
