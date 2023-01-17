@@ -74,7 +74,6 @@ namespace eShopSolution.BackendAPI.Controllers
             if (affectedResult == 0)
                 return BadRequest();
 
-
             return Ok();
         }
 

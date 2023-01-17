@@ -220,7 +220,7 @@ namespace eShopSolution.Application.Catalog.Products
 
         public async Task<List<ProductImageViewModel>> GetListImage(int productId)
         {
-            return await _context.ProductImages.Where(x => x.ProductId == productId)
+            var productImageViewModels = await _context.ProductImages.Where(x => x.ProductId == productId)
                .Select(i => new ProductImageViewModel()
                {
                    Caption = i.Caption,
@@ -232,6 +232,7 @@ namespace eShopSolution.Application.Catalog.Products
                    ProductId = i.ProductId,
                    SortOrder = i.SortOrder
                }).ToListAsync();
+            return productImageViewModels;
         }
 
         public async Task<int> RemoveImages(int imageId)

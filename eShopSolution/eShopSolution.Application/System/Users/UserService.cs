@@ -34,11 +34,13 @@ namespace eShopSolution.Application.System.Users
         }
         public async Task<string> Authencate(LoginRequest request)
         {
+            // Tìm kiếm xem có tồn tại User như Client truyền vào ko ?
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user== null)
             {
                 return null;
             }
+            // Kiểm tra xem nếu 
             var result = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, true);
             if (!result.Succeeded)
             {

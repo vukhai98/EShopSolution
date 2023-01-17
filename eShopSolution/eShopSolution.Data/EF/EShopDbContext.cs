@@ -2,6 +2,7 @@
 using eShopSolution.Data.Entities;
 using eShopSolution.Data.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace eShopSolution.Data.EF
 {
-    public class EShopDbContext : DbContext
+    public class EShopDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     {
        
         public EShopDbContext( DbContextOptions options) : base(options)
@@ -64,11 +65,6 @@ namespace eShopSolution.Data.EF
 
             modelBuilder.Seed();
             //base.OnModelCreating(modelBuilder);
-
-
-
-
-
         }
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
