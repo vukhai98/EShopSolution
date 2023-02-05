@@ -111,7 +111,7 @@ namespace eShopSolution.Application.System.Users
                 UserName = request.UserName,
                 PhoneNumber = request.PhoneNumber
             };
-            var result = await _userManager.CreateAsync(user, request.Password);
+            var result = await _userManager.CreateAsync(user);
             if (result.Succeeded)
             {
                 return true;
