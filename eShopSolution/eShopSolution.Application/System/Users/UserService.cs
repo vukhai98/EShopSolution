@@ -34,7 +34,7 @@ namespace eShopSolution.Application.System.Users
         }
         public async Task<string> Authencate(LoginRequest request)
         {
-            // Tìm kiếm xem có tồn tại User như Client truyền vào ko ?
+            // Tìm kiếm xem có tồn tại User Name như Client truyền vào ko ?
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user== null)
             {
