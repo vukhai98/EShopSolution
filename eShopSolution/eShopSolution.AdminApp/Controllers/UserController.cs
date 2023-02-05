@@ -40,7 +40,7 @@ namespace eShopSolution.AdminApp.Controllers
                 PageSize = pageSize
             };
             var data = await _userApiClient.GetUsersPagings(request);
-            return View(data);
+            return View(data.ResultObj);
         }
 
 
@@ -59,7 +59,43 @@ namespace eShopSolution.AdminApp.Controllers
             }
             var result = await _userApiClient.RegisterRequest(request);
 
-            if (result)
+            if (result.IsSuccessed)
+                return RedirectToAction("Index");
+            ModelState.AddModelError("", result.Message);
+            return View(request);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var user = await _userApiClient.GetById(id);
+            if (user.IsSuccessed)
+            {
+                var userUpdateRequest = new UserUpdateRequest()
+                {
+                    Dob = user.ResultObj.Dob,
+                    Email = user.ResultObj.Email,
+                    FirstName = user.ResultObj.FirstName,
+                    LastName = user.ResultObj.LastName,
+                    Id = user.ResultObj.Id,
+                    PhoneNumber = user.ResultObj.PhoneNumber
+                };
+                return View(userUpdateRequest);
+            }
+            return RedirectToAction("Error", "Home");
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(UserUpdateRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var result = await _userApiClient.UpdateUser(request.Id, request);
+
+            if (result.IsSuccessed)
                 return RedirectToAction("Index");
 
             return View(request);
