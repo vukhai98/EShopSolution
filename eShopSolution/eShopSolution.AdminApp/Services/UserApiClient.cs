@@ -36,15 +36,29 @@ namespace eShopSolution.AdminApp.Services
         {
             var client = _httpClientFactory.CreateClient();
             var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
-            //client.BaseAddress = new Uri(_configuration["BaseAddress"]);
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
-            //var response = await client.GetAsync($"/api/users/paging?pageIndex=" +
-            //    $"{request.PageIndex}&pageSize={request.PageSize}&keyword={request.Keyword}");
-            var response = await client.GetAsync("https://localhost:5001/api/User/paging?BearerToken="+$"{sessions}" +  "&PageIndex=1&PageSize=10");
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+            var response = await client.GetAsync($"api/user/paging?pageIndex=" +
+                $"{request.PageIndex}&pageSize={request.PageSize}&keyword={request.Keyword}");
+            //var response = await client.GetAsync("https://localhost:5001/api/User/paging?BearerToken=" + $"{sessions}" + "&PageIndex=1&PageSize=10");
 
             var body = await response.Content.ReadAsStringAsync();
             var users = JsonConvert.DeserializeObject<PagedResult<UserViewModel>>(body);
             return users;
+        }
+
+        public async Task<bool> RegisterRequest(RegisterRequest request)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            var json = JsonConvert.SerializeObject(request);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var respone = await client.PostAsync($"api/user/register", httpContent);
+
+            return respone.IsSuccessStatusCode;
+
         }
     }
 }
