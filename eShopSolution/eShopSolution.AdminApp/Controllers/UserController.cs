@@ -50,6 +50,17 @@ namespace eShopSolution.AdminApp.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var result = await _userApiClient.GetById(id);
+            if (result != null)
+            {
+                return View(result.ResultObj);
+            }
+            return NotFound();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(RegisterRequest request)
         {

@@ -36,7 +36,7 @@ namespace eShopSolution.Application.System.Users
         {
             // Tìm kiếm xem có tồn tại User Name như Client truyền vào ko ?
             var user = await _userManager.FindByNameAsync(request.UserName);
-            if (user== null)
+            if (user == null)
             {
                 return new ApiErrorResult<string>("Đăng nhập không đúng");
             }
@@ -80,7 +80,8 @@ namespace eShopSolution.Application.System.Users
                 Dob = user.Dob,
                 LastName = user.LastName,
                 FirstName = user.FirstName,
-                Id = user.Id
+                Id = user.Id,
+                UserName = user.UserName
             };
             return new ApiSuccessResult<UserViewModel>(userVm);
         }
@@ -90,7 +91,7 @@ namespace eShopSolution.Application.System.Users
             var query = _userManager.Users;
             if (!string.IsNullOrEmpty(request.Keyword))
             {
-                query = query.Where(x => x.UserName.Contains(request.Keyword) 
+                query = query.Where(x => x.UserName.Contains(request.Keyword)
                                  || x.PhoneNumber.Contains(request.Keyword));
             }
             //3.Paging
@@ -102,9 +103,9 @@ namespace eShopSolution.Application.System.Users
                                 Email = x.Email,
                                 PhoneNumber = x.PhoneNumber,
                                 UserName = x.UserName,
-                                FirstName =x.FirstName,
+                                FirstName = x.FirstName,
                                 Id = x.Id,
-                                LastName =x.LastName
+                                LastName = x.LastName
                             }).ToListAsync();
             //4. Select and projection
             var pageResult = new PagedResult<UserViewModel>()
@@ -148,7 +149,7 @@ namespace eShopSolution.Application.System.Users
 
         public async Task<ApiResult<bool>> Update(Guid id, UserUpdateRequest request)
         {
-            if ( await _userManager.Users.AnyAsync(x=> x.Email == request.Email && x.Id != id))
+            if (await _userManager.Users.AnyAsync(x => x.Email == request.Email && x.Id != id))
             {
                 return new ApiErrorResult<bool>("Email đã tồn tại");
 
@@ -159,15 +160,11 @@ namespace eShopSolution.Application.System.Users
             {
                 return new ApiErrorResult<bool>("Không tồn tại người dùng này");
             }
-            user = new AppUser()
-            {
-                Dob = request.Dob,
-                Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                PhoneNumber = request.PhoneNumber,
-                Id = id
-            };
+            user.Dob = request.Dob;
+            user.Email = request.Email;
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.PhoneNumber = request.PhoneNumber;
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
