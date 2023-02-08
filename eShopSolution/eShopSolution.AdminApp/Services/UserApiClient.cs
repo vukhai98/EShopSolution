@@ -1,4 +1,6 @@
-﻿using eShopSolution.ViewModels.Common;
+﻿using eShopSolution.AdminApp.Services.IServices;
+using eShopSolution.ViewModels.Common;
+using eShopSolution.ViewModels.System.Roles;
 using eShopSolution.ViewModels.System.Users;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -102,6 +104,11 @@ namespace eShopSolution.AdminApp.Services
             }
             return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(result);
 
+        }
+
+        public Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest resquest)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<ApiResult<bool>> UpdateUser(Guid id, UserUpdateRequest request)

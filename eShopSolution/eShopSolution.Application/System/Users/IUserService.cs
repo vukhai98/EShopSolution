@@ -1,5 +1,6 @@
 ﻿using eShopSolution.ViewModels.Common;
 using eShopSolution.ViewModels.System;
+using eShopSolution.ViewModels.System.Roles;
 using eShopSolution.ViewModels.System.Users;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace eShopSolution.Application.System.Users
         Task<ApiResult<UserViewModel>> GetById(Guid id);
         Task<ApiResult<bool>> Update(Guid id, UserUpdateRequest request);
         Task<ApiResult<bool>> Delete(Guid id);
+        Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request);
 
     }
 }
