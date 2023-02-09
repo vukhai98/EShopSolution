@@ -1,6 +1,8 @@
-﻿using eShopSolution.Data.Entities;
+﻿using eShopSolution.Application.System.Roles;
+using eShopSolution.Data.Entities;
 using eShopSolution.ViewModels.Common;
 using eShopSolution.ViewModels.System;
+using eShopSolution.ViewModels.System.Roles;
 using eShopSolution.ViewModels.System.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -88,6 +90,7 @@ namespace eShopSolution.Application.System.Users
 
             if (user == null)
                 return new ApiErrorResult<UserViewModel>("User không tồn tại");
+            var roles = await _userManager.GetRolesAsync(user);
             var userVm = new UserViewModel()
             {
                 Email = user.Email,
@@ -96,7 +99,8 @@ namespace eShopSolution.Application.System.Users
                 LastName = user.LastName,
                 FirstName = user.FirstName,
                 Id = user.Id,
-                UserName = user.UserName
+                UserName = user.UserName,
+                Roles = roles
             };
             return new ApiSuccessResult<UserViewModel>(userVm);
         }
@@ -189,5 +193,41 @@ namespace eShopSolution.Application.System.Users
             }
             return new ApiErrorResult<bool>("Cập nhật không thành công");
         }
+
+        public async Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+
+            if (user == null)
+            {
+                return new ApiErrorResult<bool>("Không tìm thấy user");
+            }
+
+            // Lấy ra danh tên quyền không được chọn khi truyền vào
+            var listRemoveRoles = request.Roles.Where(x => x.Selected == false).Select(x => x.Name).ToList();
+
+            foreach (var item in listRemoveRoles)
+            {
+                // Kiểm tra nếu user đang có quyên đó thì sẽ đi
+                if ((await _userManager.IsInRoleAsync(user, item)) == true)
+                {
+                    await _userManager.RemoveFromRoleAsync(user, item);
+                }
+            }
+
+            // Lấy ra danh tên quyền  được chọn khi truyền vào
+            var listAddRoles = request.Roles.Where(x => x.Selected == true).Select(x => x.Name).ToList();
+            foreach (var role in listAddRoles)
+            {
+                // Kiểm tra nếu user không có quyền đó thì mới add
+                if ((await _userManager.IsInRoleAsync(user, role)) == true)
+                {
+                    await _userManager.AddToRoleAsync(user, role);
+                }
+            }
+           
+            return new ApiSuccessResult<bool>();
+        }
+
     }
 }

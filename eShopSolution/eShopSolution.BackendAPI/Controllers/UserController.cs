@@ -1,5 +1,7 @@
-﻿using eShopSolution.Application.System.Users;
+﻿using eShopSolution.Application.System.Roles;
+using eShopSolution.Application.System.Users;
 using eShopSolution.ViewModels.System;
+using eShopSolution.ViewModels.System.Roles;
 using eShopSolution.ViewModels.System.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,12 +21,12 @@ namespace eShopSolution.BackendAPI.Controllers
 
         public UserController(IUserService userService)
         {
-            _userService  = userService;
+            _userService = userService;
         }
 
         [HttpPost("authenticate")]
         [AllowAnonymous]
-        public async Task<IActionResult> Authenticate([FromBody]LoginRequest request)
+        public async Task<IActionResult> Authenticate([FromBody] LoginRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +59,7 @@ namespace eShopSolution.BackendAPI.Controllers
                 return BadRequest(result.Message);
             }
 
-            return Ok();
+            return Ok(result);
         }
 
         //http://localhost/api/users/id
@@ -100,7 +102,7 @@ namespace eShopSolution.BackendAPI.Controllers
 
         //http://localhost/api/users/paging?pageIndex=1&pageSize=10&keyword=''
         [HttpGet("paging")]
-        public async Task<IActionResult> GetAllPaging([FromQuery]GetUserPagingRequest request)
+        public async Task<IActionResult> GetAllPaging([FromQuery] GetUserPagingRequest request)
         {
             var products = await _userService.GetUserPaging(request);
             return Ok(products);
@@ -112,6 +114,24 @@ namespace eShopSolution.BackendAPI.Controllers
             var user = await _userService.GetById(id);
 
             return Ok(user);
+        }
+
+        [HttpPost("{id}/roles")]
+        public async Task<IActionResult> RoleAssign(Guid id, [FromBody] RoleAssignRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _userService.RoleAssign(id, request);
+
+            if (!result.IsSuccessed)
+            {
+                return BadRequest(result.Message);
+            }
+
+            return Ok(result);
         }
     }
 }

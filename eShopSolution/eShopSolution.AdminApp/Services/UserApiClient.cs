@@ -1,4 +1,6 @@
-﻿using eShopSolution.ViewModels.Common;
+﻿using eShopSolution.AdminApp.Services.IServices;
+using eShopSolution.ViewModels.Common;
+using eShopSolution.ViewModels.System.Roles;
 using eShopSolution.ViewModels.System.Users;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -104,9 +106,27 @@ namespace eShopSolution.AdminApp.Services
 
         }
 
-        public async Task<ApiResult<bool>> UpdateUser(Guid id, UserUpdateRequest request)
+        public async Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request)
         {
             var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+
+            var json = JsonConvert.SerializeObject(request);
+            var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"api/user/{id}/roles", httpContent);
+            var result = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(result);
+            }
+            return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(result);
+        }
+
+        public async Task<ApiResult<bool>> UpdateUser(Guid id, UserUpdateRequest request)
+        {
+             var client = _httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
 
             var json = JsonConvert.SerializeObject(request);
