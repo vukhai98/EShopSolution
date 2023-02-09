@@ -185,18 +185,19 @@ namespace eShopSolution.AdminApp.Controllers
             var listRoles = await _roleApiClient.GetAllRoles();
 
             var roleAssginRequests = new RoleAssignRequest();
+            roleAssginRequests.Roles = new List<SelectItem>();
 
             foreach (var item in listRoles.ResultObj)
             {
-                var roleAssginRequest = new SelectItem()
+                var roleAssginRequest = new SelectItem();
+                roleAssginRequest.Id = item.Id;
+                roleAssginRequest.Name = item.Name;
+                if (user.ResultObj.Roles != null)
                 {
-                    Id = item.Id,
-                    Name = item.Name,
-                    Selected = user.ResultObj.Roles.Contains(item.Name)
-
-                };
+                    roleAssginRequest.Selected = user.ResultObj.Roles.Contains(item.Name); // Nếu user đã có role đó thì trả ra cho màn hình view role đó đã được chọn ở texbox
+                }
                 roleAssginRequests.Roles.Add(roleAssginRequest);
-            }
+            };
 
             return roleAssginRequests;
         }

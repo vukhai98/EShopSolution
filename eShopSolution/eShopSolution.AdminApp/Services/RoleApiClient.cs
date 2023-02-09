@@ -32,7 +32,7 @@ namespace eShopSolution.AdminApp.Services
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
 
-            var response = await client.GetAsync($"api/roles");
+            var response = await client.GetAsync($"api/role");
 
             var body = await response.Content.ReadAsStringAsync();
 
