@@ -23,6 +23,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddTransient<IUserApiClient, UserApiClient>();
 builder.Services.AddTransient<IRoleApiClient, RoleApiClient>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<ILanguageApiClient, LanguageApiClient>();
 
 builder.Services.AddControllersWithViews()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginResquestValidator>()); ;
